@@ -3,6 +3,7 @@
 
 import { EngineArchetypeDataName, EngineArchetypeName, LevelDataEntity } from 'sonolus-core'
 import { Track } from './archetypes/Track.js'
+import { TrackColorCommand } from './archetypes/trackCommands/TrackColorCommand.js'
 import { TrackMoveCommand } from './archetypes/trackCommands/TrackMoveCommand.js'
 import { TrackScaleCommand } from './archetypes/trackCommands/TrackScaleCommand.js'
 import { Ease } from './easing.js'
@@ -114,9 +115,7 @@ export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: 
     const addEntity = (entity: Omit<LevelDataEntity, 'data'> & { data: Record<string, number | string> }) => {
         entities.push({
             ...entity,
-            data: Object.entries(entity.data).map(([k, v]) =>
-                typeof v === 'number' ? { name: k, value: v } : { name: k, ref: v },
-            ),
+            data: Object.entries(entity.data).map(([k, v]) => (typeof v === 'number' ? { name: k, value: v } : { name: k, ref: v })),
         })
     }
 
@@ -186,6 +185,21 @@ export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: 
             })
         }
 
+        const colorTransitions = parseTransitions(track.Color, track.ColorChange)
+        for (const transition of colorTransitions) {
+            addEntity({
+                archetype: TrackColorCommand.name,
+                data: {
+                    trackRef: trackRef,
+                    startBeat: secondsToBeat(transition.startTime),
+                    endBeat: secondsToBeat(transition.endTime),
+                    startValue: transition.startValue,
+                    endValue: transition.endValue,
+                    ease: transition.ease,
+                },
+            })
+        }
+
         addEntity({
             ref: trackRef,
             archetype: Track.name,
@@ -195,6 +209,7 @@ export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: 
                 animateSpawn: +track.EntranceOn, // The plus turns the boolean into a number
                 pos: track.X,
                 size: track.Size,
+                color: track.Color,
                 moveRef: moveRef,
             },
         })

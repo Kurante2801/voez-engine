@@ -14,8 +14,8 @@ export const trackDespawnDuration = 0.25
 export enum Layer {
     TRACK_GLOW,
     TRACK_BACKGROUND,
-    TRACK_CENTER_ANIMATING,
     TRACK_FOREGROUND,
+    TRACK_CENTER_ANIMATING,
     TRACK_BORDER,
     TRACK_CENTER,
     JUDGMENT,

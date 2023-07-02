@@ -15,13 +15,13 @@ export const animationCurves = levelMemory({
 })
 
 export const voezSkin = levelData({
+    trackTop: Boolean,
     trackBottom: Boolean,
     trackLineTop: Boolean,
     trackLineBottom: Boolean,
     trackBorderTop: Boolean,
     trackBorderBottom: Boolean,
-    trackGlowLeft: Boolean,
-    trackGlowRight: Boolean,
+    trackGlow: Boolean,
     trackActiveLeft: Boolean,
     trackActiveRight: Boolean,
     trackForeground: Boolean,

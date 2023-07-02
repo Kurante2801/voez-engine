@@ -4,6 +4,46 @@ import { animationCurves, track, voezSkin } from '../shared.js'
 import { skin } from '../skin.js'
 import { evaluateCurve, scaledX, voezSpaceToSonolusSpace } from '../util.js'
 
+// Due to engine limitations, we need to use sprites to handle colors instead of RGB
+const topColorSprites = [
+    skin.sprites.trackTopRed,
+    skin.sprites.trackTopYellow,
+    skin.sprites.trackTopGray,
+    skin.sprites.trackTopLightBlue,
+    skin.sprites.trackTopGreen,
+    skin.sprites.trackTopOrange,
+    skin.sprites.trackTopViolet,
+    skin.sprites.trackTopBlue,
+    skin.sprites.trackTopCyan,
+    skin.sprites.trackTopPurple,
+]
+
+const bottomColorSprites = [
+    skin.sprites.trackBottomRed,
+    skin.sprites.trackBottomYellow,
+    skin.sprites.trackBottomGray,
+    skin.sprites.trackBottomLightBlue,
+    skin.sprites.trackBottomGreen,
+    skin.sprites.trackBottomOrange,
+    skin.sprites.trackBottomViolet,
+    skin.sprites.trackBottomBlue,
+    skin.sprites.trackBottomCyan,
+    skin.sprites.trackBottomPurple,
+]
+
+const glowColorSprites = [
+    skin.sprites.trackGlowRed,
+    skin.sprites.trackGlowYellow,
+    skin.sprites.trackGlowGray,
+    skin.sprites.trackGlowLightBlue,
+    skin.sprites.trackGlowGreen,
+    skin.sprites.trackGlowOrange,
+    skin.sprites.trackGlowViolet,
+    skin.sprites.trackGlowBlue,
+    skin.sprites.trackGlowCyan,
+    skin.sprites.trackGlowPurple,
+]
+
 export class Track extends Archetype {
     data = this.defineData({
         startBeat: { name: 'startBeat', type: Number },
@@ -13,11 +53,15 @@ export class Track extends Archetype {
         // Initial values, they are overritten by TrackCommands
         pos: { name: 'pos', type: Number }, // Range from [0-1]
         size: { name: 'size', type: Number }, // Multiplier
+        color: { name: 'color', type: Number }, // Int from [0-9]
     })
 
     shared = this.defineSharedMemory({
         pos: Number,
         size: Number,
+        colorProgress: Number,
+        colorStart: Number,
+        colorEnd: Number,
     })
 
     times = this.entityMemory({
@@ -45,6 +89,10 @@ export class Track extends Archetype {
 
         this.shared.pos = voezSpaceToSonolusSpace(this.data.pos)
         if (options.mirror) this.shared.pos *= -1
+
+        this.shared.colorProgress = 0
+        this.shared.colorStart = this.data.color
+        this.shared.colorEnd = this.data.color
     }
 
     initialize(): void {
@@ -124,10 +172,16 @@ export class Track extends Archetype {
             b: Math.lerp(judgmentPivot, judgmentPivot - 1, scaleY),
         })
 
-        // Background and white gradient
-        skin.sprites.trackTop.draw(topLayout, Layer.TRACK_BACKGROUND, 1)
-        if (voezSkin.trackForeground) skin.sprites.trackForeground.draw(topLayout, Layer.TRACK_FOREGROUND, 1)
-        if (voezSkin.trackBottom) skin.sprites.trackBottom.draw(bottomLayout, Layer.TRACK_BACKGROUND, 1)
+        // Color elements
+        if (voezSkin.trackTop) this.drawColorSprites(topColorSprites, topLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start))
+        else skin.sprites.lane.draw(topLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start), 1)
+        if (voezSkin.trackBottom)
+            this.drawColorSprites(bottomColorSprites, bottomLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start))
+
+        if (voezSkin.trackBottom)
+            if (voezSkin.trackForeground)
+                // Foreground (white gradient)
+                skin.sprites.trackForeground.draw(topLayout, Layer.TRACK_FOREGROUND, 1)
 
         // Center lines
         if (voezSkin.trackLineTop) {
@@ -192,26 +246,25 @@ export class Track extends Archetype {
         }
 
         // Glows
-        if (voezSkin.trackGlowLeft) {
-            const layout = new Rect({
+        if (voezSkin.trackGlow) {
+            const left = new Rect({
                 l: x - w - track.glow,
                 r: x - w,
                 t: topLayout.t,
                 b: topLayout.b,
             })
 
-            skin.sprites.trackGlowLeft.draw(layout, Layer.TRACK_GLOW, 1)
-        }
+            this.drawColorSprites(glowColorSprites, left, Layer.TRACK_GLOW)
 
-        if (voezSkin.trackGlowRight) {
-            const layout = new Rect({
-                l: x + w,
-                r: x + w + track.glow,
+            // TODO: this doesn't always work, create new images for right glow
+            const right = new Rect({
+                l: x + w + track.glow,
+                r: x + w,
                 t: topLayout.t,
                 b: topLayout.b,
             })
 
-            skin.sprites.trackGlowRight.draw(layout, Layer.TRACK_GLOW, 1)
+            this.drawColorSprites(glowColorSprites, right, Layer.TRACK_GLOW)
         }
 
         // Shape (slot)
@@ -225,4 +278,15 @@ export class Track extends Archetype {
 
         skin.sprites.trackSlot.draw(slot, Layer.TRACK_SLOT, 1)
     }
+
+    drawColorSprites(sprites: SkinSprite[], layout: Rect, layer: number): void {
+        const t = this.shared.colorProgress
+
+        for (const [index, sprite] of sprites.entries()) {
+            if (index == this.shared.colorStart) sprite.draw(layout, layer, 1 - t)
+            if (index == this.shared.colorEnd) sprite.draw(layout, layer, t)
+        }
+    }
+
+    getZ = (layer: number, time: number) => layer - time / 1000
 }
