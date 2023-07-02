@@ -124,8 +124,105 @@ export class Track extends Archetype {
             b: Math.lerp(judgmentPivot, judgmentPivot - 1, scaleY),
         })
 
+        // Background and white gradient
         skin.sprites.trackTop.draw(topLayout, Layer.TRACK_BACKGROUND, 1)
         if (voezSkin.trackForeground) skin.sprites.trackForeground.draw(topLayout, Layer.TRACK_FOREGROUND, 1)
         if (voezSkin.trackBottom) skin.sprites.trackBottom.draw(bottomLayout, Layer.TRACK_BACKGROUND, 1)
+
+        // Center lines
+        if (voezSkin.trackLineTop) {
+            const layout = new Rect({
+                l: x - track.line * 0.5,
+                r: x + track.line * 0.5,
+                t: topLayout.t,
+                b: topLayout.b,
+            })
+
+            skin.sprites.trackLineTop.draw(layout, this.animating ? Layer.TRACK_CENTER_ANIMATING : Layer.TRACK_CENTER, 1)
+        }
+
+        if (voezSkin.trackLineBottom) {
+            const layout = new Rect({
+                l: x - track.line * 0.5,
+                r: x + track.line * 0.5,
+                t: bottomLayout.t,
+                b: bottomLayout.b,
+            })
+
+            skin.sprites.trackLineBottom.draw(layout, this.animating ? Layer.TRACK_CENTER_ANIMATING : Layer.TRACK_CENTER, 1)
+        }
+
+        // Border lines
+        if (voezSkin.trackLineTop) {
+            const left = new Rect({
+                l: x - w,
+                r: x - w + track.line,
+                t: topLayout.t,
+                b: topLayout.b,
+            })
+
+            const right = new Rect({
+                l: x + w - track.line,
+                r: x + w,
+                t: topLayout.t,
+                b: topLayout.b,
+            })
+
+            skin.sprites.trackBorderTop.draw(left, Layer.TRACK_BORDER, 1)
+            skin.sprites.trackBorderTop.draw(right, Layer.TRACK_BORDER, 1)
+        }
+
+        if (voezSkin.trackLineBottom) {
+            const left = new Rect({
+                l: x - w,
+                r: x - w + track.line,
+                t: bottomLayout.t,
+                b: bottomLayout.b,
+            })
+
+            const right = new Rect({
+                l: x + w - track.line,
+                r: x + w,
+                t: bottomLayout.t,
+                b: bottomLayout.b,
+            })
+
+            skin.sprites.trackBorderBottom.draw(left, Layer.TRACK_BORDER, 1)
+            skin.sprites.trackBorderBottom.draw(right, Layer.TRACK_BORDER, 1)
+        }
+
+        // Glows
+        if (voezSkin.trackGlowLeft) {
+            const layout = new Rect({
+                l: x - w - track.glow,
+                r: x - w,
+                t: topLayout.t,
+                b: topLayout.b,
+            })
+
+            skin.sprites.trackGlowLeft.draw(layout, Layer.TRACK_GLOW, 1)
+        }
+
+        if (voezSkin.trackGlowRight) {
+            const layout = new Rect({
+                l: x + w,
+                r: x + w + track.glow,
+                t: topLayout.t,
+                b: topLayout.b,
+            })
+
+            skin.sprites.trackGlowRight.draw(layout, Layer.TRACK_GLOW, 1)
+        }
+
+        // Shape (slot)
+        const radius = track.slot * scaleSlot
+        const slot = new Rect({
+            l: x - radius,
+            r: x + radius,
+            t: judgmentPivot + radius,
+            b: judgmentPivot - radius,
+        })
+
+        skin.sprites.trackSlot.draw(slot, Layer.TRACK_SLOT, 1)
     }
 }
