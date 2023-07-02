@@ -10,7 +10,8 @@
         "skipLibCheck": true,
         "exactOptionalPropertyTypes": true,
         "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "Node16"
+        "moduleResolution": "Node16",
+        "resolveJsonModule": true
     },
     "include": [
         "./src"

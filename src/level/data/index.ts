@@ -1,16 +1,10 @@
 import { LevelData } from 'sonolus-core'
-import { archetypes } from '../../engine/data/archetypes/index.js'
+import { editorEntities } from '../../engine/data/editor.js'
+import note from '../note.json'
+import track from '../track.json'
 
+const bpm = 60
 export const data: LevelData = {
     bgmOffset: 0,
-    entities: [
-        {
-            archetype: archetypes.Initialization.name,
-            data: [],
-        },
-        {
-            archetype: archetypes.Stage.name,
-            data: [],
-        },
-    ],
+    entities: editorEntities(track, note, bpm),
 }
