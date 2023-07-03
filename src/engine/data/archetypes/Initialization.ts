@@ -115,10 +115,9 @@ export class Initialization extends Archetype {
         voezSkin.trackLineBottom = skin.sprites.trackLineBottom.exists
         voezSkin.trackBorderTop = skin.sprites.trackBorderTop.exists
         voezSkin.trackBorderBottom = skin.sprites.trackBorderBottom.exists
-        voezSkin.trackActiveLeft = skin.sprites.trackActiveLeft.exists
-        voezSkin.trackActiveRight = skin.sprites.trackActiveRight.exists
         voezSkin.trackForeground = skin.sprites.trackForeground.exists
-        voezSkin.trackActive = skin.sprites.trackActive.exists
+        voezSkin.trackActiveTop = skin.sprites.trackActiveTop.exists
+        voezSkin.trackActiveSides = skin.sprites.trackActiveSides.exists
         voezSkin.swipeNote = skin.sprites.swipeNote.exists
 
         voezSkin.trackTop =

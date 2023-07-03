@@ -11,9 +11,8 @@ export const skin = defineSkin({
         trackLineBottom: 'VOEZ Track Line Bottom',
         trackBorderTop: 'VOEZ Track Border Top',
         trackBorderBottom: 'VOEZ Track Border Bottom',
-        trackActiveLeft: 'VOEZ Track Active Left',
-        trackActiveRight: 'VOEZ Track Active Right',
-        trackActive: 'VOEZ Track Active',
+        trackActiveSides: 'VOEZ Track Active Sides',
+        trackActiveTop: 'VOEZ Track Active Top',
         trackForeground: 'VOEZ Track Foreground',
 
         cover: SkinSpriteName.StageCover,

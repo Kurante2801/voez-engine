@@ -22,10 +22,9 @@ export const voezSkin = levelData({
     trackBorderTop: Boolean,
     trackBorderBottom: Boolean,
     trackGlow: Boolean,
-    trackActiveLeft: Boolean,
-    trackActiveRight: Boolean,
     trackForeground: Boolean,
-    trackActive: Boolean,
+    trackActiveTop: Boolean,
+    trackActiveSides: Boolean,
     swipeNote: Boolean,
 })
 

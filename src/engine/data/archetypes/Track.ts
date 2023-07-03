@@ -1,5 +1,5 @@
 import { options } from '../../configuration/options.js'
-import { Layer, judgmentPivot, trackDespawnDuration, trackSpawnDuration, trackWidth } from '../constants.js'
+import { Layer, judgmentPivot, trackActiveTime, trackDespawnDuration, trackSpawnDuration, trackWidth } from '../constants.js'
 import { animationCurves, track, trackSprites, voezSkin } from '../shared.js'
 import { skin } from '../skin.js'
 import { evaluateCurve, scaledX, voezSpaceToSonolusSpace } from '../util.js'
@@ -22,6 +22,10 @@ export class Track extends Archetype {
         colorProgress: Number,
         colorStart: Number,
         colorEnd: Number,
+        hitbox: { l: Number, r: Number },
+        animating: Boolean,
+        active: { start: Number, end: Number },
+        touches: Collection(16, TouchId),
     })
 
     times = this.entityMemory({
@@ -85,6 +89,16 @@ export class Track extends Archetype {
             this.despawn = true
             return
         }
+
+        // Update hitbox
+        const x = this.shared.pos
+        const w = Math.abs(this.shared.size * track.width) // Hitbox doesn't have padding
+
+        this.shared.hitbox.l = x - w
+        this.shared.hitbox.r = x + w
+
+        // We can't update shared stuff in UpdateParallel, that's why we do it here
+        this.shared.animating = this.animating
     }
 
     updateParallel(): void {
@@ -236,6 +250,33 @@ export class Track extends Archetype {
         })
 
         skin.sprites.trackSlot.draw(slot, Layer.TRACK_SLOT, 1)
+
+        // Active animation
+        if (this.animating || !options.laneEffectEnabled || time.now >= this.shared.active.end) return
+
+        const alpha = 1 - Math.unlerp(this.shared.active.start, this.shared.active.end, time.now)
+
+        if (voezSkin.trackActiveSides) {
+            const left = new Rect({
+                l: x - w - track.pad,
+                r: x - w,
+                t: 1,
+                b: judgmentPivot,
+            })
+
+            skin.sprites.trackActiveSides.draw(left, Layer.TRACK_ACTIVE, alpha)
+
+            const right = new Rect({
+                l: x + w + track.pad,
+                r: x + w,
+                t: 1,
+                b: judgmentPivot,
+            })
+
+            skin.sprites.trackActiveSides.draw(right, Layer.TRACK_ACTIVE, alpha)
+        }
+
+        if (voezSkin.trackActiveTop) skin.sprites.trackActiveTop.draw(topLayout, Layer.TRACK_ACTIVE, alpha)
     }
 
     drawColorSprites(sprites: Tuple<SkinSpriteId>, layout: Rect, layer: number): void {
@@ -245,4 +286,24 @@ export class Track extends Archetype {
     }
 
     getZ = (layer: number, time: number) => layer - time / 1000
+
+    activate(): void {
+        this.shared.active.start = time.now
+        this.shared.active.end = time.now + trackActiveTime
+    }
+
+    touchOrder = 0
+    touch(): void {
+        if (options.autoplay) return
+
+        this.shared.touches.clear()
+        if (this.animating || this.despawnSequential || this.despawn) return
+
+        for (const touch of touches) {
+            if (this.shared.hitbox.l <= touch.x && touch.x <= this.shared.hitbox.r) {
+                this.activate()
+                break
+            }
+        }
+    }
 }
