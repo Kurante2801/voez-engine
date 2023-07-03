@@ -1,6 +1,6 @@
 import { despawnHeightValues, despawnWidthValues, spawnHeightValues, spawnWidthValues } from '../bakedAnimationCurves.js'
 import { animationCurves, trackSprites, voezSkin } from '../shared.js'
-import { skin, trackBottomSprites, trackLeftSprites, trackRightSprites, trackTopSprites } from '../skin.js'
+import { skin, trackBottomSprites, trackGlowSprites, trackTopSprites } from '../skin.js'
 import { archetypes } from './index.js'
 
 export class Initialization extends Archetype {
@@ -102,8 +102,7 @@ export class Initialization extends Archetype {
         // Initialize sprite tuples
         for (const [index, value] of trackTopSprites.entries()) trackSprites.top.set(index, value.id)
         for (const [index, value] of trackBottomSprites.entries()) trackSprites.bottom.set(index, value.id)
-        for (const [index, value] of trackLeftSprites.entries()) trackSprites.left.set(index, value.id)
-        for (const [index, value] of trackRightSprites.entries()) trackSprites.right.set(index, value.id)
+        for (const [index, value] of trackGlowSprites.entries()) trackSprites.glow.set(index, value.id)
 
         score.base.set({
             perfect: 1,
@@ -146,29 +145,17 @@ export class Initialization extends Archetype {
             skin.sprites.trackBottomCyan.exists &&
             skin.sprites.trackBottomPurple.exists
 
-        voezSkin.trackGlowLeft =
-            skin.sprites.trackGlowLeftRed.exists &&
-            skin.sprites.trackGlowLeftYellow.exists &&
-            skin.sprites.trackGlowLeftGray.exists &&
-            skin.sprites.trackGlowLeftLightBlue.exists &&
-            skin.sprites.trackGlowLeftGreen.exists &&
-            skin.sprites.trackGlowLeftOrange.exists &&
-            skin.sprites.trackGlowLeftViolet.exists &&
-            skin.sprites.trackGlowLeftBlue.exists &&
-            skin.sprites.trackGlowLeftCyan.exists &&
-            skin.sprites.trackGlowLeftPurple.exists
-
-        voezSkin.trackGlowRight =
-            skin.sprites.trackGlowRightRed.exists &&
-            skin.sprites.trackGlowRightYellow.exists &&
-            skin.sprites.trackGlowRightGray.exists &&
-            skin.sprites.trackGlowRightLightBlue.exists &&
-            skin.sprites.trackGlowRightGreen.exists &&
-            skin.sprites.trackGlowRightOrange.exists &&
-            skin.sprites.trackGlowRightViolet.exists &&
-            skin.sprites.trackGlowRightBlue.exists &&
-            skin.sprites.trackGlowRightCyan.exists &&
-            skin.sprites.trackGlowRightPurple.exists
+        voezSkin.trackGlow =
+            skin.sprites.trackGlowRed.exists &&
+            skin.sprites.trackGlowYellow.exists &&
+            skin.sprites.trackGlowGray.exists &&
+            skin.sprites.trackGlowLightBlue.exists &&
+            skin.sprites.trackGlowGreen.exists &&
+            skin.sprites.trackGlowOrange.exists &&
+            skin.sprites.trackGlowViolet.exists &&
+            skin.sprites.trackGlowBlue.exists &&
+            skin.sprites.trackGlowCyan.exists &&
+            skin.sprites.trackGlowPurple.exists
     }
 
     spawnOrder() {

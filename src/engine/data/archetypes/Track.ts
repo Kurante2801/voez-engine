@@ -206,26 +206,24 @@ export class Track extends Archetype {
         }
 
         // Glows
-        if (voezSkin.trackGlowLeft) {
-            const layout = new Rect({
+        if (voezSkin.trackGlow) {
+            const left = new Rect({
                 l: x - w - track.glow,
                 r: x - w,
                 t: topLayout.t,
                 b: topLayout.b,
             })
 
-            this.drawColorSprites(trackSprites.left, layout, this.getZ(Layer.TRACK_GLOW, this.times.start))
-        }
+            this.drawColorSprites(trackSprites.glow, left, this.getZ(Layer.TRACK_GLOW, this.times.start))
 
-        if (voezSkin.trackGlowRight) {
-            const layout = new Rect({
-                l: x + w,
-                r: x + w + track.glow,
+            const right = new Rect({
+                r: x + w,
+                l: x + w + track.glow,
                 t: topLayout.t,
                 b: topLayout.b,
             })
 
-            this.drawColorSprites(trackSprites.right, layout, this.getZ(Layer.TRACK_GLOW, this.times.start))
+            this.drawColorSprites(trackSprites.glow, right, this.getZ(Layer.TRACK_GLOW, this.times.start))
         }
 
         // Shape (slot)
@@ -242,7 +240,6 @@ export class Track extends Archetype {
 
     drawColorSprites(sprites: Tuple<SkinSpriteId>, layout: Rect, layer: number): void {
         const t = this.shared.colorProgress
-
         if (t < 1) skin.sprites.draw(sprites.get(this.shared.colorStart), layout, layer, 1 - t)
         if (t > 0) skin.sprites.draw(sprites.get(this.shared.colorEnd), layout, layer, t)
     }

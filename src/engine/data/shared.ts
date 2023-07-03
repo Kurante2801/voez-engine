@@ -21,8 +21,7 @@ export const voezSkin = levelData({
     trackLineBottom: Boolean,
     trackBorderTop: Boolean,
     trackBorderBottom: Boolean,
-    trackGlowLeft: Boolean,
-    trackGlowRight: Boolean,
+    trackGlow: Boolean,
     trackActiveLeft: Boolean,
     trackActiveRight: Boolean,
     trackForeground: Boolean,
@@ -30,10 +29,9 @@ export const voezSkin = levelData({
     swipeNote: Boolean,
 })
 
-// Color sprites (we need to use tuples since we reach the max limit of sprites if we draw 40 sprites)
+// Color sprites (we need to use tuples since we reach the max limit of sprites if we draw 30 sprites)
 export const trackSprites = levelMemory({
     top: Tuple(10, SkinSpriteId),
     bottom: Tuple(10, SkinSpriteId),
-    left: Tuple(10, SkinSpriteId),
-    right: Tuple(10, SkinSpriteId),
+    glow: Tuple(10, SkinSpriteId),
 })
