@@ -1,3 +1,4 @@
+import { HoldTick } from './HoldTick.js'
 import { Initialization } from './Initialization.js'
 import { Stage } from './Stage.js'
 import { Track } from './Track.js'
@@ -33,4 +34,6 @@ export const archetypes = defineArchetypes({
     SlideAfterImage,
     SwipeAfterImage,
     HoldAfterImage,
+
+    HoldTick,
 })

@@ -7,8 +7,14 @@ import { note } from '../../shared.js'
 import { skin } from '../../skin.js'
 import { getScheduledSFXTime } from '../../util.js'
 import { windows } from '../../windows.js'
+import { Track } from '../Track.js'
 import { archetypes } from '../index.js'
 import { Note, NoteType } from './Note.js'
+
+type TickData = {
+    time: number
+    pos: number
+}
 
 export class HoldEndNote extends Note {
     bucket = buckets.holdEnd
@@ -28,7 +34,7 @@ export class HoldEndNote extends Note {
         headRef: { name: 'headRef', type: Number },
     })
 
-    headTimes = this.entityMemory({
+    tailTimes = this.entityMemory({
         target: Number,
         visual: {
             min: Number,
@@ -43,8 +49,8 @@ export class HoldEndNote extends Note {
     preprocess(): void {
         super.preprocess()
 
-        this.headTimes.target = bpmChanges.at(this.holdData.endBeat).time
-        this.times.scheduledSfx = getScheduledSFXTime(this.headTimes.target)
+        this.tailTimes.target = bpmChanges.at(this.holdData.endBeat).time
+        this.times.scheduledSfx = getScheduledSFXTime(this.tailTimes.target)
         this.times.spawn = Math.min(this.times.visual.min, this.times.scheduledSfx)
     }
 
@@ -56,15 +62,35 @@ export class HoldEndNote extends Note {
             this.result.bucket.index = this.bucket.index
         } else this.result.accuracy = this.windows.good.min
 
-        this.times.input.min = this.headTimes.target + this.windows.good.min + input.offset
-        this.times.input.max = this.headTimes.target + this.windows.good.max + input.offset
+        this.times.input.min = this.tailTimes.target + this.windows.good.min + input.offset
+        this.times.input.max = this.tailTimes.target + this.windows.good.max + input.offset
 
-        this.headTimes.visual.max = this.headTimes.target
-        this.headTimes.visual.min = this.headTimes.target - note.speed
+        this.tailTimes.visual.max = this.tailTimes.target
+        this.tailTimes.visual.min = this.tailTimes.target - note.speed
+
+        // Spawn hold ticks every 100 ms
+        const startX = Track.getPosAtTime(this.data.trackRef, this.times.target)
+        let moves = false
+
+        // Due to compile limitations, we must do this for loop twice
+        for (let i = this.times.target; i <= this.tailTimes.target; i += 0.1) {
+            const x = Track.getPosAtTime(this.data.trackRef, i)
+            if (x !== startX) {
+                moves = true
+                break
+            }
+        }
+
+        if (!moves) return
+
+        for (let i = this.times.target; i <= this.tailTimes.target; i += 0.1) {
+            const x = Track.getPosAtTime(this.data.trackRef, i)
+            archetypes.HoldTick.spawn({ time: i, pos: x })
+        }
     }
 
     updateSequential(): void {
-        if (options.autoplay && time.now >= this.headTimes.target) this.despawn = true
+        if (options.autoplay && time.now >= this.tailTimes.target) this.despawn = true
         if (this.despawnSequential) {
             if (this.result.judgment === Judgment.Miss) this.afterImage()
             this.despawn = true
@@ -111,10 +137,10 @@ export class HoldEndNote extends Note {
 
         if (time.now < this.times.input.min || !this.headSharedData.judged) return
 
-        const hitTime = Math.min(time.now - input.offset, this.headTimes.target)
+        const hitTime = Math.min(time.now - input.offset, this.tailTimes.target)
 
-        this.result.judgment = input.judge(hitTime, this.headTimes.target, this.windows)
-        this.result.accuracy = hitTime - this.headTimes.target
+        this.result.judgment = input.judge(hitTime, this.tailTimes.target, this.windows)
+        this.result.accuracy = hitTime - this.tailTimes.target
 
         this.result.bucket.index = this.bucket.index
         this.result.bucket.value = this.result.accuracy * 1000
@@ -155,7 +181,7 @@ export class HoldEndNote extends Note {
         const t = Math.unlerp(this.times.visual.min, this.times.visual.max, time.now)
         this.y = Math.max(judgmentPivot, Math.lerp(screen.t, judgmentPivot, t))
 
-        const endT = Math.unlerp(this.headTimes.visual.min, this.headTimes.visual.max, time.now)
+        const endT = Math.unlerp(this.tailTimes.visual.min, this.tailTimes.visual.max, time.now)
         const endY = Math.max(judgmentPivot, Math.lerp(screen.t, judgmentPivot, endT))
 
         // Draw connector
@@ -193,7 +219,7 @@ export class HoldEndNote extends Note {
         archetypes.HoldAfterImage.spawn({
             trackRef: this.data.trackRef,
             start: time.now,
-            end: this.headTimes.target,
+            end: this.tailTimes.target,
             data: 0,
         })
     }
