@@ -77,3 +77,56 @@ export const skin = defineSkin({
         trackGlowRightPurple: 'VOEZ Track Glow Right Purple',
     },
 })
+
+// Due to engine limitations, we need to use sprites to handle colors instead of RGB
+export const trackTopSprites = [
+    skin.sprites.trackTopRed,
+    skin.sprites.trackTopYellow,
+    skin.sprites.trackTopGray,
+    skin.sprites.trackTopLightBlue,
+    skin.sprites.trackTopGreen,
+    skin.sprites.trackTopOrange,
+    skin.sprites.trackTopViolet,
+    skin.sprites.trackTopBlue,
+    skin.sprites.trackTopCyan,
+    skin.sprites.trackTopPurple,
+]
+
+export const trackBottomSprites = [
+    skin.sprites.trackBottomRed,
+    skin.sprites.trackBottomYellow,
+    skin.sprites.trackBottomGray,
+    skin.sprites.trackBottomLightBlue,
+    skin.sprites.trackBottomGreen,
+    skin.sprites.trackBottomOrange,
+    skin.sprites.trackBottomViolet,
+    skin.sprites.trackBottomBlue,
+    skin.sprites.trackBottomCyan,
+    skin.sprites.trackBottomPurple,
+]
+
+export const trackLeftSprites = [
+    skin.sprites.trackGlowLeftRed,
+    skin.sprites.trackGlowLeftYellow,
+    skin.sprites.trackGlowLeftGray,
+    skin.sprites.trackGlowLeftLightBlue,
+    skin.sprites.trackGlowLeftGreen,
+    skin.sprites.trackGlowLeftOrange,
+    skin.sprites.trackGlowLeftViolet,
+    skin.sprites.trackGlowLeftBlue,
+    skin.sprites.trackGlowLeftCyan,
+    skin.sprites.trackGlowLeftPurple,
+]
+
+export const trackRightSprites = [
+    skin.sprites.trackGlowRightRed,
+    skin.sprites.trackGlowRightYellow,
+    skin.sprites.trackGlowRightGray,
+    skin.sprites.trackGlowRightLightBlue,
+    skin.sprites.trackGlowRightGreen,
+    skin.sprites.trackGlowRightOrange,
+    skin.sprites.trackGlowRightViolet,
+    skin.sprites.trackGlowRightBlue,
+    skin.sprites.trackGlowRightCyan,
+    skin.sprites.trackGlowRightPurple,
+]

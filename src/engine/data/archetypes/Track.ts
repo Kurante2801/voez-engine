@@ -1,61 +1,8 @@
 import { options } from '../../configuration/options.js'
 import { Layer, judgmentPivot, trackDespawnDuration, trackSpawnDuration, trackWidth } from '../constants.js'
-import { animationCurves, track, voezSkin } from '../shared.js'
+import { animationCurves, track, trackSprites, voezSkin } from '../shared.js'
 import { skin } from '../skin.js'
 import { evaluateCurve, scaledX, voezSpaceToSonolusSpace } from '../util.js'
-
-// Due to engine limitations, we need to use sprites to handle colors instead of RGB
-const topColorSprites = [
-    skin.sprites.trackTopRed,
-    skin.sprites.trackTopYellow,
-    skin.sprites.trackTopGray,
-    skin.sprites.trackTopLightBlue,
-    skin.sprites.trackTopGreen,
-    skin.sprites.trackTopOrange,
-    skin.sprites.trackTopViolet,
-    skin.sprites.trackTopBlue,
-    skin.sprites.trackTopCyan,
-    skin.sprites.trackTopPurple,
-]
-
-const bottomColorSprites = [
-    skin.sprites.trackBottomRed,
-    skin.sprites.trackBottomYellow,
-    skin.sprites.trackBottomGray,
-    skin.sprites.trackBottomLightBlue,
-    skin.sprites.trackBottomGreen,
-    skin.sprites.trackBottomOrange,
-    skin.sprites.trackBottomViolet,
-    skin.sprites.trackBottomBlue,
-    skin.sprites.trackBottomCyan,
-    skin.sprites.trackBottomPurple,
-]
-
-const glowLeftColorSprites = [
-    skin.sprites.trackGlowLeftRed,
-    skin.sprites.trackGlowLeftYellow,
-    skin.sprites.trackGlowLeftGray,
-    skin.sprites.trackGlowLeftLightBlue,
-    skin.sprites.trackGlowLeftGreen,
-    skin.sprites.trackGlowLeftOrange,
-    skin.sprites.trackGlowLeftViolet,
-    skin.sprites.trackGlowLeftBlue,
-    skin.sprites.trackGlowLeftCyan,
-    skin.sprites.trackGlowLeftPurple,
-]
-
-const glowRightColorSprites = [
-    skin.sprites.trackGlowRightRed,
-    skin.sprites.trackGlowRightYellow,
-    skin.sprites.trackGlowRightGray,
-    skin.sprites.trackGlowRightLightBlue,
-    skin.sprites.trackGlowRightGreen,
-    skin.sprites.trackGlowRightOrange,
-    skin.sprites.trackGlowRightViolet,
-    skin.sprites.trackGlowRightBlue,
-    skin.sprites.trackGlowRightCyan,
-    skin.sprites.trackGlowRightPurple,
-]
 
 export class Track extends Archetype {
     data = this.defineData({
@@ -186,10 +133,10 @@ export class Track extends Archetype {
         })
 
         // Color elements
-        if (voezSkin.trackTop) this.drawColorSprites(topColorSprites, topLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start))
+        if (voezSkin.trackTop) this.drawColorSprites(trackSprites.top, topLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start))
         else skin.sprites.lane.draw(topLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start), 1)
         if (voezSkin.trackBottom)
-            this.drawColorSprites(bottomColorSprites, bottomLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start))
+            this.drawColorSprites(trackSprites.bottom, bottomLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start))
 
         if (voezSkin.trackBottom)
             if (voezSkin.trackForeground)
@@ -267,8 +214,7 @@ export class Track extends Archetype {
                 b: topLayout.b,
             })
 
-            skin.sprites.trackGlowLeftGray.draw(layout, this.getZ(Layer.TRACK_GLOW, this.times.start), 1)
-            //this.drawColorSprites(glowLeftColorSprites, layout, this.getZ(Layer.TRACK_GLOW, this.times.start))
+            this.drawColorSprites(trackSprites.left, layout, this.getZ(Layer.TRACK_GLOW, this.times.start))
         }
 
         if (voezSkin.trackGlowRight) {
@@ -279,8 +225,7 @@ export class Track extends Archetype {
                 b: topLayout.b,
             })
 
-            skin.sprites.trackGlowRightGray.draw(layout, this.getZ(Layer.TRACK_GLOW, this.times.start), 1)
-            //this.drawColorSprites(glowRightColorSprites, layout, this.getZ(Layer.TRACK_GLOW, this.times.start))
+            this.drawColorSprites(trackSprites.right, layout, this.getZ(Layer.TRACK_GLOW, this.times.start))
         }
 
         // Shape (slot)
@@ -295,13 +240,11 @@ export class Track extends Archetype {
         skin.sprites.trackSlot.draw(slot, Layer.TRACK_SLOT, 1)
     }
 
-    drawColorSprites(sprites: SkinSprite[], layout: Rect, layer: number): void {
+    drawColorSprites(sprites: Tuple<SkinSpriteId>, layout: Rect, layer: number): void {
         const t = this.shared.colorProgress
 
-        for (const [index, sprite] of sprites.entries()) {
-            if (index === this.shared.colorStart && t < 1) sprite.draw(layout, layer, 1 - t)
-            if (index === this.shared.colorEnd && t > 0) sprite.draw(layout, layer, t)
-        }
+        if (t < 1) skin.sprites.draw(sprites.get(this.shared.colorStart), layout, layer, 1 - t)
+        if (t > 0) skin.sprites.draw(sprites.get(this.shared.colorEnd), layout, layer, t)
     }
 
     getZ = (layer: number, time: number) => layer - time / 1000
