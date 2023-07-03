@@ -4,6 +4,8 @@
 import { EngineArchetypeDataName, EngineArchetypeName, LevelDataEntity } from 'sonolus-core'
 import { Track } from './archetypes/Track.js'
 import { ClickNote } from './archetypes/notes/ClickNote.js'
+import { HoldEndNote } from './archetypes/notes/HoldEndNote.js'
+import { HoldStartNote } from './archetypes/notes/HoldStartNote.js'
 import { SlideNote } from './archetypes/notes/SlideNote.js'
 import { SwipeNote } from './archetypes/notes/SwipeNote.js'
 import { TrackColorCommand } from './archetypes/trackCommands/TrackColorCommand.js'
@@ -222,7 +224,30 @@ export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: 
             }
 
             if (note.Type === 'hold') {
-                // TODO
+                const headRef = nextReference()
+
+                addEntity({
+                    ref: headRef,
+                    archetype: HoldStartNote.name,
+                    data: {
+                        trackRef: trackRef,
+                        [EngineArchetypeDataName.Beat]: secondsToBeat(note.Time),
+                    },
+                })
+
+                addEntity({
+                    archetype: HoldEndNote.name,
+                    data: {
+                        trackRef: trackRef,
+                        [EngineArchetypeDataName.Beat]: secondsToBeat(note.Time),
+                        headRef: headRef,
+                        endBeat: secondsToBeat(note.Time + note.Hold),
+                    },
+                })
+
+                end = Math.max(end, note.Time + note.Hold)
+
+                continue
             } else end = Math.max(end, note.Time + windows.click.good.max)
 
             if (name === '') continue
