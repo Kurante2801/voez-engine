@@ -1,5 +1,7 @@
+import { options } from '../../configuration/options.js'
 import { despawnHeightValues, despawnWidthValues, spawnHeightValues, spawnWidthValues } from '../bakedAnimationCurves.js'
-import { animationCurves, trackSprites, voezSkin } from '../shared.js'
+import { scrollDurations } from '../constants.js'
+import { animationCurves, note, trackSprites, voezSkin } from '../shared.js'
 import { skin, trackBottomSprites, trackGlowSprites, trackTopSprites } from '../skin.js'
 import { archetypes } from './index.js'
 
@@ -103,6 +105,14 @@ export class Initialization extends Archetype {
         for (const [index, value] of trackTopSprites.entries()) trackSprites.top.set(index, value.id)
         for (const [index, value] of trackBottomSprites.entries()) trackSprites.bottom.set(index, value.id)
         for (const [index, value] of trackGlowSprites.entries()) trackSprites.glow.set(index, value.id)
+
+        // Note speed
+        for (const [index, value] of scrollDurations.entries()) {
+            if (index === options.noteSpeed - 1) {
+                note.speed = value
+                break
+            }
+        }
 
         score.base.set({
             perfect: 1,

@@ -34,3 +34,11 @@ export const trackSprites = levelMemory({
     bottom: Tuple(10, SkinSpriteId),
     glow: Tuple(10, SkinSpriteId),
 })
+
+export const note = levelData({
+    speed: Number,
+    radius: Number,
+    tickRadius: Number,
+    swipeThreshold: Number,
+    swipeFallbackRadius: Number,
+})

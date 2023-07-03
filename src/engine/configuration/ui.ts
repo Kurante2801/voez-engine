@@ -1,6 +1,8 @@
 import { EngineConfigurationUI } from 'sonolus-core'
 
+// https://github.com/NonSpicyBurrito/sonolus-voez-engine/blob/6ab6fa91aedc2de57d806ad6a49527bd7e943d9c/src/engine/configuration/ui.mts
 export const ui: EngineConfigurationUI = {
+    scope: 'VOEZ',
     primaryMetric: 'arcade',
     secondaryMetric: 'life',
     menuVisibility: {
@@ -25,33 +27,33 @@ export const ui: EngineConfigurationUI = {
     },
     judgmentAnimation: {
         scale: {
-            from: 1,
+            from: 1.2,
             to: 1,
-            duration: 0,
-            ease: 'None',
+            duration: 0.15,
+            ease: 'OutCubic',
         },
         alpha: {
             from: 1,
             to: 1,
             duration: 0,
-            ease: 'None',
+            ease: 'Linear',
         },
     },
     comboAnimation: {
         scale: {
-            from: 1,
+            from: 1.2,
             to: 1,
-            duration: 0,
-            ease: 'None',
+            duration: 0.15,
+            ease: 'OutCubic',
         },
         alpha: {
             from: 1,
             to: 1,
             duration: 0,
-            ease: 'None',
+            ease: 'Linear',
         },
     },
-    judgmentErrorStyle: 'none',
+    judgmentErrorStyle: 'arrowDown',
     judgmentErrorPlacement: 'both',
-    judgmentErrorMin: 0,
+    judgmentErrorMin: 20,
 }

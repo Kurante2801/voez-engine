@@ -3,10 +3,14 @@
 
 import { EngineArchetypeDataName, EngineArchetypeName, LevelDataEntity } from 'sonolus-core'
 import { Track } from './archetypes/Track.js'
+import { ClickNote } from './archetypes/notes/ClickNote.js'
+import { SlideNote } from './archetypes/notes/SlideNote.js'
+import { SwipeNote } from './archetypes/notes/SwipeNote.js'
 import { TrackColorCommand } from './archetypes/trackCommands/TrackColorCommand.js'
 import { TrackMoveCommand } from './archetypes/trackCommands/TrackMoveCommand.js'
 import { TrackScaleCommand } from './archetypes/trackCommands/TrackScaleCommand.js'
 import { Ease } from './easing.js'
+import { windows } from './windows.js'
 
 export type EditorTrack = {
     Id: number
@@ -99,6 +103,7 @@ function parseTransitions(initialValue: number, transitions: EditorTransition[])
     return parsed.sort((a, b) => a.startTime - b.startTime)
 }
 
+// Parses track.json and note.json from VOEZEditor into Sonolus entities
 export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: number): LevelDataEntity[] {
     const entities: LevelDataEntity[] = [
         {
@@ -137,6 +142,8 @@ export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: 
 
     for (const track of tracks) {
         const trackRef = nextReference()
+        // This will ensure the track ends after all of its notes can be played
+        let end = track.End
 
         // We want to make the track reference the first move transition we find,
         // and have every move transition reference the next one
@@ -200,12 +207,42 @@ export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: 
             })
         }
 
+        for (const note of notes) {
+            if (note.Track !== track.Id) continue
+
+            let name = ''
+            let extra = 0
+
+            if (note.Type === 'click') name = ClickNote.name
+            if (note.Type === 'slide') name = SlideNote.name
+
+            if (note.Type === 'swipe') {
+                name = SwipeNote.name
+                extra = note.Dir <= 0 ? -1 : 1
+            }
+
+            if (note.Type === 'hold') {
+                // TODO
+            } else end = Math.max(end, note.Time + windows.click.good.max)
+
+            if (name === '') continue
+
+            addEntity({
+                archetype: name,
+                data: {
+                    trackRef: trackRef,
+                    [EngineArchetypeDataName.Beat]: secondsToBeat(note.Time),
+                    extraData: extra,
+                },
+            })
+        }
+
         addEntity({
             ref: trackRef,
             archetype: Track.name,
             data: {
                 startBeat: secondsToBeat(track.Start),
-                endBeat: secondsToBeat(track.End),
+                endBeat: secondsToBeat(end),
                 animateSpawn: +track.EntranceOn, // The plus turns the boolean into a number
                 pos: track.X,
                 size: track.Size,

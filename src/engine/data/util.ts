@@ -29,3 +29,7 @@ export function voezSpaceToSonolusSpace(x: number): number {
     const right = Math.lerp(screen.l, screen.r, trackMarginRight)
     return Math.lerp(left, right, x)
 }
+
+export function getScheduledSFXTime(targetTime: number) {
+    return targetTime - 0.5 - Math.max(audio.offset, 0)
+}
