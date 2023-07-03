@@ -31,17 +31,30 @@ const bottomColorSprites = [
     skin.sprites.trackBottomPurple,
 ]
 
-const glowColorSprites = [
-    skin.sprites.trackGlowRed,
-    skin.sprites.trackGlowYellow,
-    skin.sprites.trackGlowGray,
-    skin.sprites.trackGlowLightBlue,
-    skin.sprites.trackGlowGreen,
-    skin.sprites.trackGlowOrange,
-    skin.sprites.trackGlowViolet,
-    skin.sprites.trackGlowBlue,
-    skin.sprites.trackGlowCyan,
-    skin.sprites.trackGlowPurple,
+const glowLeftColorSprites = [
+    skin.sprites.trackGlowLeftRed,
+    skin.sprites.trackGlowLeftYellow,
+    skin.sprites.trackGlowLeftGray,
+    skin.sprites.trackGlowLeftLightBlue,
+    skin.sprites.trackGlowLeftGreen,
+    skin.sprites.trackGlowLeftOrange,
+    skin.sprites.trackGlowLeftViolet,
+    skin.sprites.trackGlowLeftBlue,
+    skin.sprites.trackGlowLeftCyan,
+    skin.sprites.trackGlowLeftPurple,
+]
+
+const glowRightColorSprites = [
+    skin.sprites.trackGlowRightRed,
+    skin.sprites.trackGlowRightYellow,
+    skin.sprites.trackGlowRightGray,
+    skin.sprites.trackGlowRightLightBlue,
+    skin.sprites.trackGlowRightGreen,
+    skin.sprites.trackGlowRightOrange,
+    skin.sprites.trackGlowRightViolet,
+    skin.sprites.trackGlowRightBlue,
+    skin.sprites.trackGlowRightCyan,
+    skin.sprites.trackGlowRightPurple,
 ]
 
 export class Track extends Archetype {
@@ -246,25 +259,28 @@ export class Track extends Archetype {
         }
 
         // Glows
-        if (voezSkin.trackGlow) {
-            const left = new Rect({
+        if (voezSkin.trackGlowLeft) {
+            const layout = new Rect({
                 l: x - w - track.glow,
                 r: x - w,
                 t: topLayout.t,
                 b: topLayout.b,
             })
 
-            this.drawColorSprites(glowColorSprites, left, Layer.TRACK_GLOW)
+            skin.sprites.trackGlowLeftGray.draw(layout, this.getZ(Layer.TRACK_GLOW, this.times.start), 1)
+            //this.drawColorSprites(glowLeftColorSprites, layout, this.getZ(Layer.TRACK_GLOW, this.times.start))
+        }
 
-            // TODO: this doesn't always work, create new images for right glow
-            const right = new Rect({
-                l: x + w + track.glow,
-                r: x + w,
+        if (voezSkin.trackGlowRight) {
+            const layout = new Rect({
+                l: x + w,
+                r: x + w + track.glow,
                 t: topLayout.t,
                 b: topLayout.b,
             })
 
-            this.drawColorSprites(glowColorSprites, right, Layer.TRACK_GLOW)
+            skin.sprites.trackGlowRightGray.draw(layout, this.getZ(Layer.TRACK_GLOW, this.times.start), 1)
+            //this.drawColorSprites(glowRightColorSprites, layout, this.getZ(Layer.TRACK_GLOW, this.times.start))
         }
 
         // Shape (slot)
@@ -283,8 +299,8 @@ export class Track extends Archetype {
         const t = this.shared.colorProgress
 
         for (const [index, sprite] of sprites.entries()) {
-            if (index == this.shared.colorStart) sprite.draw(layout, layer, 1 - t)
-            if (index == this.shared.colorEnd) sprite.draw(layout, layer, t)
+            if (index === this.shared.colorStart && t < 1) sprite.draw(layout, layer, 1 - t)
+            if (index === this.shared.colorEnd && t > 0) sprite.draw(layout, layer, t)
         }
     }
 

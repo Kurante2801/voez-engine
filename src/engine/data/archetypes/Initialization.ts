@@ -140,17 +140,8 @@ export class Initialization extends Archetype {
             skin.sprites.trackBottomCyan.exists &&
             skin.sprites.trackBottomPurple.exists
 
-        voezSkin.trackGlow =
-            skin.sprites.trackGlowRed.exists &&
-            skin.sprites.trackGlowYellow.exists &&
-            skin.sprites.trackGlowGray.exists &&
-            skin.sprites.trackGlowLightBlue.exists &&
-            skin.sprites.trackGlowGreen.exists &&
-            skin.sprites.trackGlowOrange.exists &&
-            skin.sprites.trackGlowViolet.exists &&
-            skin.sprites.trackGlowBlue.exists &&
-            skin.sprites.trackGlowCyan.exists &&
-            skin.sprites.trackGlowPurple.exists
+        voezSkin.trackGlowLeft = skin.sprites.trackGlowLeftGray.exists
+        voezSkin.trackGlowRight = skin.sprites.trackGlowRightGray.exists
     }
 
     spawnOrder() {
