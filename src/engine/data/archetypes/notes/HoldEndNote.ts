@@ -95,6 +95,8 @@ export class HoldEndNote extends Note {
             if (this.result.judgment === Judgment.Miss) this.afterImage()
             this.despawn = true
         }
+
+        this.isTouched = false
     }
 
     updateParallel(): void {
