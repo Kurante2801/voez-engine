@@ -36,8 +36,8 @@ export function getScheduledSFXTime(targetTime: number) {
     return targetTime - 0.5 - Math.max(audio.offset, 0)
 }
 
-export function roundArbitrary(x: number, round: number) {
-    return Math.round(x / round) * round
+export function ceilBy(x: number, step: number) {
+    return Math.ceil(x / step) * step
 }
 
 export function getPosAtTime(trackRef: number, time: number): number {
@@ -62,7 +62,7 @@ export function getPosAtTime(trackRef: number, time: number): number {
 }
 
 export function spawnHoldTicks(trackRef: number, from: number, to: number) {
-    for (let i = roundArbitrary(from, 0.1); i <= to; i += 0.1) {
+    for (let i = ceilBy(from, 0.1); i <= to; i += 0.1) {
         const x = getPosAtTime(trackRef, i)
         archetypes.HoldTick.spawn({ time: i, pos: x })
     }
