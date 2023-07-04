@@ -1,4 +1,6 @@
+import { archetypes } from './archetypes/index.js'
 import { trackMarginLeft, trackMarginRight } from './constants.js'
+import { easeFunction } from './easing.js'
 
 // Even though we're on Unity, Sonolus doesn't give us access to AnimationCurve, so we use precalculated values instead
 export function evaluateCurve(values: Tuple<number>, t: number, multiplier: number): number {
@@ -32,4 +34,36 @@ export function voezSpaceToSonolusSpace(x: number): number {
 
 export function getScheduledSFXTime(targetTime: number) {
     return targetTime - 0.5 - Math.max(audio.offset, 0)
+}
+
+export function roundArbitrary(x: number, round: number) {
+    return Math.round(x / round) * round
+}
+
+export function getPosAtTime(trackRef: number, time: number): number {
+    const data = archetypes.Track.data.get(trackRef)
+
+    let pos = data.pos
+    let moveRef = data.moveRef
+
+    while (moveRef > 0) {
+        const shared = archetypes.TrackMoveCommand.shared.get(moveRef)
+
+        if (shared.start <= time) {
+            const t = Math.clamp(Math.unlerp(shared.start, shared.end, time), 0, 1)
+            const move = archetypes.TrackMoveCommand.data.get(moveRef)
+            pos = Math.lerp(move.startValue, move.endValue, easeFunction(move.ease, t))
+        }
+
+        moveRef = archetypes.TrackMoveCommand.moveData.get(moveRef).nextRef
+    }
+
+    return pos
+}
+
+export function spawnHoldTicks(trackRef: number, from: number, to: number) {
+    for (let i = roundArbitrary(from, 0.1); i <= to; i += 0.1) {
+        const x = getPosAtTime(trackRef, i)
+        archetypes.HoldTick.spawn({ time: i, pos: x })
+    }
 }

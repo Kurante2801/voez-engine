@@ -5,9 +5,8 @@ import { effect } from '../../effect.js'
 import { particle } from '../../particle.js'
 import { note } from '../../shared.js'
 import { skin } from '../../skin.js'
-import { getScheduledSFXTime } from '../../util.js'
+import { getPosAtTime, getScheduledSFXTime, spawnHoldTicks } from '../../util.js'
 import { windows } from '../../windows.js'
-import { Track } from '../Track.js'
 import { archetypes } from '../index.js'
 import { Note, NoteType } from './Note.js'
 
@@ -68,25 +67,19 @@ export class HoldEndNote extends Note {
         this.tailTimes.visual.max = this.tailTimes.target
         this.tailTimes.visual.min = this.tailTimes.target - note.speed
 
-        // Spawn hold ticks every 100 ms
-        const startX = Track.getPosAtTime(this.data.trackRef, this.times.target)
+        // Check if the track will move while this note is played
+        const startX = getPosAtTime(this.data.trackRef, this.times.target)
         let moves = false
 
-        // Due to compile limitations, we must do this for loop twice
         for (let i = this.times.target; i <= this.tailTimes.target; i += 0.1) {
-            const x = Track.getPosAtTime(this.data.trackRef, i)
+            const x = getPosAtTime(this.data.trackRef, i)
             if (x !== startX) {
                 moves = true
                 break
             }
         }
 
-        if (!moves) return
-
-        for (let i = this.times.target; i <= this.tailTimes.target; i += 0.1) {
-            const x = Track.getPosAtTime(this.data.trackRef, i)
-            archetypes.HoldTick.spawn({ time: i, pos: x })
-        }
+        if (moves) spawnHoldTicks(this.data.trackRef, this.times.target, this.tailTimes.target)
     }
 
     updateSequential(): void {

@@ -1,10 +1,8 @@
 import { options } from '../../configuration/options.js'
 import { Layer, judgmentPivot, trackActiveTime, trackDespawnDuration, trackSpawnDuration, trackWidth } from '../constants.js'
-import { easeFunction } from '../easing.js'
 import { animationCurves, track, trackSprites, voezSkin } from '../shared.js'
 import { skin } from '../skin.js'
 import { evaluateCurve, scaledX, voezSpaceToSonolusSpace } from '../util.js'
-import { archetypes } from './index.js'
 
 export class Track extends Archetype {
     data = this.defineData({
@@ -12,6 +10,7 @@ export class Track extends Archetype {
         endBeat: { name: 'endBeat', type: Number },
         animateSpawn: { name: 'animateSpawn', type: Boolean },
         moveRef: { name: 'moveRef', type: Number }, // References the first move transition this track has
+        thisRef: { name: 'thisRef', type: Number },
         // Initial values, they are overritten by TrackCommands
         pos: { name: 'pos', type: Number }, // Range from [0-1]
         size: { name: 'size', type: Number }, // Multiplier
@@ -307,26 +306,5 @@ export class Track extends Archetype {
                 break
             }
         }
-    }
-
-    static getPosAtTime(trackRef: number, time: number): number {
-        const data = archetypes.Track.data.get(trackRef)
-
-        let pos = data.pos
-        let moveRef = data.moveRef
-
-        while (moveRef !== -1) {
-            const shared = archetypes.TrackMoveCommand.shared.get(moveRef)
-
-            if (shared.start <= time) {
-                const t = Math.clamp(Math.unlerp(shared.start, shared.end, time), 0, 1)
-                const move = archetypes.TrackMoveCommand.data.get(moveRef)
-                pos = Math.lerp(move.startValue, move.endValue, easeFunction(move.ease, t))
-            }
-
-            moveRef = archetypes.TrackMoveCommand.moveData.get(moveRef).nextRef
-        }
-
-        return pos
     }
 }

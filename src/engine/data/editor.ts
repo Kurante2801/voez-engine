@@ -152,31 +152,30 @@ export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: 
         let moveRef = -1
 
         const moveTransitions = parseTransitions(track.X, track.Move)
-        if (moveTransitions.length > 0) {
-            id += 1
-            moveRef = id
+        if (moveTransitions.length > 0) moveRef = id + 1
 
-            for (const [key, transition] of moveTransitions.entries()) {
-                let nextRef = id + 1
-                if (key >= moveTransitions.length - 1) nextRef = -1
+        let index = 0
+        // it is VERY important that move transitions are sorted by time, since that affects util's getPosAtTime
+        for (const transition of moveTransitions.sort((a, b) => a.startTime - b.startTime)) {
+            const moveRef = nextReference()
+            const isLast = index >= moveTransitions.length - 1
+            const nextRef = isLast ? -1 : id + 1
 
-                addEntity({
-                    ref: id.toString(),
-                    archetype: TrackMoveCommand.name,
-                    data: {
-                        trackRef: trackRef,
-                        startBeat: secondsToBeat(transition.startTime),
-                        endBeat: secondsToBeat(transition.endTime),
-                        startValue: transition.startValue,
-                        endValue: transition.endValue,
-                        ease: transition.ease,
-                        thisRef: id,
-                        nextRef: nextRef,
-                    },
-                })
+            addEntity({
+                ref: moveRef,
+                archetype: TrackMoveCommand.name,
+                data: {
+                    trackRef: trackRef,
+                    startBeat: secondsToBeat(transition.startTime),
+                    endBeat: secondsToBeat(transition.endTime),
+                    startValue: transition.startValue,
+                    endValue: transition.endValue,
+                    ease: transition.ease,
+                    nextRef: nextRef.toString(),
+                },
+            })
 
-                id += 1
-            }
+            index++
         }
 
         const scaleTransitions = parseTransitions(track.Size, track.Scale)
@@ -272,7 +271,8 @@ export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: 
                 pos: track.X,
                 size: track.Size,
                 color: track.Color,
-                moveRef: moveRef,
+                moveRef: moveRef.toString(),
+                thisRef: trackRef,
             },
         })
     }
