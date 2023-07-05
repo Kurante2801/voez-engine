@@ -1,6 +1,6 @@
 import { options } from '../../../configuration/options.js'
 import { buckets } from '../../buckets.js'
-import { effectRadius, judgmentPivot } from '../../constants.js'
+import { effectRadius, judgmentPivot, minSFXDistance } from '../../constants.js'
 import { effect } from '../../effect.js'
 import { particle } from '../../particle.js'
 import { note } from '../../shared.js'
@@ -45,6 +45,8 @@ export class HoldEndNote extends Note {
     despawnSequential = this.entityMemory(Boolean)
     isTouched = this.entityMemory(Boolean)
 
+    scheduledLoopSFX = this.entityMemory(Boolean)
+
     preprocess(): void {
         super.preprocess()
 
@@ -84,6 +86,7 @@ export class HoldEndNote extends Note {
 
     updateSequential(): void {
         if (options.autoplay && time.now >= this.tailTimes.target) this.despawn = true
+
         if (this.despawnSequential) {
             if (this.result.judgment === Judgment.Miss) this.afterImage()
             this.despawn = true
@@ -95,6 +98,8 @@ export class HoldEndNote extends Note {
     updateParallel(): void {
         this.moveEffect()
         this.act()
+
+        if (this.shouldScheduleSFX) this.scheduledEffect()
         if (!this.despawnSequential) this.draw()
     }
 
@@ -114,12 +119,16 @@ export class HoldEndNote extends Note {
         return options.sfxEnabled && effect.clips.hold.exists && !options.autoplay && !options.autoSFX
     }
 
+    get shouldScheduleLoopSFX() {
+        return (options.autoSFX || options.autoplay) && effect.clips.hold.exists
+    }
+
     act(): void {
         if (this.despawnSequential || options.autoplay || this.headInfo.state !== EntityState.Despawned) return
 
         // Note is being held (and still has time left)
         if (this.isTouched && time.now < this.times.input.max) {
-            if (this.shouldPlaySFX && !this.sfxInstanceId) this.soundEffect(Judgment.Perfect)
+            if (this.shouldPlaySFX && !this.sfxInstanceId) this.loopSoundEffect()
             this.moveEffect()
 
             return
@@ -139,13 +148,14 @@ export class HoldEndNote extends Note {
 
         this.result.bucket.index = this.bucket.index
         this.result.bucket.value = this.result.accuracy * 1000
+
+        this.soundEffect(this.result.judgment)
     }
 
     particleEffect(_: Judgment): void {}
 
-    soundEffect(_: Judgment): void {
+    loopSoundEffect(): void {
         if (!this.shouldPlaySFX) return
-
         this.sfxInstanceId = effect.clips.hold.loop()
     }
 
@@ -229,5 +239,16 @@ export class HoldEndNote extends Note {
                 break
             }
         }
+    }
+
+    scheduledEffect(): void {
+        if (this.sfxScheduled) return
+
+        const id = effect.clips.hold.scheduleLoop(this.times.target)
+        effect.clips.scheduleStopLoop(id, this.tailTimes.target)
+
+        this.sfxScheduled = true
+        effect.clips.perfect.schedule(this.times.target, minSFXDistance)
+        effect.clips.perfect.schedule(this.tailTimes.target, minSFXDistance)
     }
 }

@@ -50,7 +50,7 @@ export abstract class Note extends Archetype {
         },
     })
 
-    isScheduled = this.entityMemory(Boolean)
+    sfxScheduled = this.entityMemory(Boolean)
     y = this.entityMemory(Number)
     z = this.entityMemory(Number)
 
@@ -94,7 +94,7 @@ export abstract class Note extends Archetype {
             this.result.bucket.index = this.bucket.index
         } else this.result.accuracy = this.windows.good.max
 
-        this.isScheduled = false
+        this.sfxScheduled = false
     }
 
     shouldSpawn() {
@@ -113,11 +113,6 @@ export abstract class Note extends Archetype {
         return this.trackSharedMemory.pos
     }
 
-    scheduleSFX(): void {
-        this.isScheduled = true
-        effect.clips.perfect.schedule(this.times.target, minSFXDistance)
-    }
-
     updateSequential(): void {
         if (options.autoplay && time.now >= this.times.target) {
             this.despawn = true
@@ -129,7 +124,7 @@ export abstract class Note extends Archetype {
     }
 
     updateParallel(): void {
-        if (this.shouldScheduleSFX && !this.isScheduled) this.scheduleSFX()
+        if (this.shouldScheduleSFX) this.scheduledEffect()
         if (time.now < this.times.visual.min) return
 
         if (this.despawn) return
@@ -214,6 +209,13 @@ export abstract class Note extends Archetype {
         if (judgement === Judgment.Perfect) effect.clips.perfect.play(minSFXDistance)
         if (judgement === Judgment.Great) effect.clips.great.play(minSFXDistance)
         if (judgement === Judgment.Good) effect.clips.good.play(minSFXDistance)
+    }
+
+    scheduledEffect(): void {
+        if (this.sfxScheduled) return
+
+        this.sfxScheduled = true
+        effect.clips.perfect.schedule(this.times.target, minSFXDistance)
     }
 
     // For now it activates only the note's track
