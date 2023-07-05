@@ -46,6 +46,7 @@ export class Track extends Archetype {
         track.glow = scaledX(12)
         track.slot = scaledX(12)
         track.active = scaledX(96)
+        track.hitbox = scaledX(8) // The hitbox extends a bit beyond track bounds
     }
 
     preprocess(): void {
@@ -95,8 +96,8 @@ export class Track extends Archetype {
         const x = this.shared.pos
         const w = Math.abs(this.shared.size * track.width) // Hitbox doesn't have padding
 
-        this.shared.hitbox.l = x - w
-        this.shared.hitbox.r = x + w
+        this.shared.hitbox.l = x - w - track.hitbox
+        this.shared.hitbox.r = x + w + track.hitbox
 
         // We can't update shared stuff in UpdateParallel, that's why we do it here
         this.shared.animating = this.animating
@@ -259,7 +260,7 @@ export class Track extends Archetype {
 
         if (voezSkin.trackActiveSides) {
             const left = new Rect({
-                l: x - w - track.pad,
+                l: x - w - track.hitbox,
                 r: x - w,
                 t: 1,
                 b: judgmentPivot,
@@ -268,7 +269,7 @@ export class Track extends Archetype {
             skin.sprites.trackActiveSides.draw(left, Layer.TRACK_ACTIVE, alpha)
 
             const right = new Rect({
-                l: x + w + track.pad,
+                l: x + w + track.hitbox,
                 r: x + w,
                 t: 1,
                 b: judgmentPivot,

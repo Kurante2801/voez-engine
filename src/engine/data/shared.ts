@@ -5,6 +5,7 @@ export const track = levelData({
     glow: Number,
     slot: Number, // Half width
     active: Number, // track width + activeWide
+    hitbox: Number, // hitbox margin (half)
 })
 
 export const animationCurves = levelMemory({
