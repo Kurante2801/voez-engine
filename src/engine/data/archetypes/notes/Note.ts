@@ -1,9 +1,9 @@
 import { EngineArchetypeDataName } from 'sonolus-core'
 import { options } from '../../../configuration/options.js'
-import { effectRadius, judgmentPivot, minSFXDistance, trackActiveTime } from '../../constants.js'
+import { Layer, effectRadius, judgmentPivot, minSFXDistance, trackActiveTime } from '../../constants.js'
 import { effect } from '../../effect.js'
 import { note } from '../../shared.js'
-import { getScheduledSFXTime, scaledX } from '../../util.js'
+import { getScheduledSFXTime, getZ, scaledX } from '../../util.js'
 import { archetypes } from '../index.js'
 
 export enum NoteType {
@@ -80,7 +80,7 @@ export abstract class Note extends Archetype {
         this.times.visual.min = this.times.target - note.speed
 
         this.times.spawn = Math.min(this.times.visual.min, this.times.scheduledSfx)
-        this.z = 1000 - this.times.target
+        this.z = getZ(Layer.NOTE, this.times.target)
     }
 
     initialize(): void {

@@ -8,7 +8,10 @@ export enum Layer {
     JUDGMENT,
     TRACK_ACTIVE,
     TRACK_SLOT,
-    STAGE_COVER,
+    HOLD_NOTE_CONNECTOR,
+    NOTE,
+    HOLD_TICK,
+    STAGE,
 }
 
 export const judgmentPivot = -0.67

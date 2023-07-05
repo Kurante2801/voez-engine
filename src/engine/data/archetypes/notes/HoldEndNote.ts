@@ -1,11 +1,11 @@
 import { options } from '../../../configuration/options.js'
 import { buckets } from '../../buckets.js'
-import { effectRadius, judgmentPivot, minSFXDistance } from '../../constants.js'
+import { Layer, effectRadius, judgmentPivot, minSFXDistance } from '../../constants.js'
 import { effect } from '../../effect.js'
 import { particle } from '../../particle.js'
 import { note } from '../../shared.js'
 import { skin } from '../../skin.js'
-import { getPosAtTime, getScheduledSFXTime, spawnHoldTicks } from '../../util.js'
+import { getPosAtTime, getScheduledSFXTime, getZ, spawnHoldTicks } from '../../util.js'
 import { windows } from '../../windows.js'
 import { archetypes } from '../index.js'
 import { Note, NoteType } from './Note.js'
@@ -42,6 +42,11 @@ export class HoldEndNote extends Note {
         },
     })
 
+    layers = this.entityMemory({
+        tail: Number,
+        connector: Number,
+    })
+
     sfxInstanceId = this.entityMemory(LoopedEffectClipInstanceId)
     despawnSequential = this.entityMemory(Boolean)
     isTouched = this.entityMemory(Boolean)
@@ -54,6 +59,9 @@ export class HoldEndNote extends Note {
         this.tailTimes.target = bpmChanges.at(this.holdData.endBeat).time
         this.times.scheduledSfx = getScheduledSFXTime(this.tailTimes.target)
         this.times.spawn = Math.min(this.times.visual.min, this.times.scheduledSfx)
+
+        this.layers.connector = getZ(Layer.HOLD_NOTE_CONNECTOR, this.times.target)
+        this.layers.tail = getZ(Layer.NOTE, this.tailTimes.target)
     }
 
     initialize(): void {
@@ -202,7 +210,7 @@ export class HoldEndNote extends Note {
         })
 
         if (options.hidden <= 0 || time.now < this.tailTimes.visual.hidden)
-            skin.sprites.holdConnector.draw(connectorLayout, this.z - 100, 1)
+            skin.sprites.holdConnector.draw(connectorLayout, this.layers.connector, 1)
 
         // Draw head
         const layout = new Rect({
@@ -222,7 +230,7 @@ export class HoldEndNote extends Note {
             b: endY - note.radius,
         })
 
-        if (options.hidden <= 0 || time.now < this.tailTimes.visual.hidden) skin.sprites.holdEndNote.draw(tailLayout, this.z, 1)
+        if (options.hidden <= 0 || time.now < this.tailTimes.visual.hidden) skin.sprites.holdEndNote.draw(tailLayout, this.layers.tail, 1)
     }
 
     afterImage(): void {

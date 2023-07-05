@@ -1,7 +1,8 @@
 import { options } from '../../configuration/options.js'
-import { judgmentPivot } from '../constants.js'
+import { Layer, judgmentPivot } from '../constants.js'
 import { note } from '../shared.js'
 import { skin } from '../skin.js'
+import { getZ } from '../util.js'
 
 export class HoldTick extends SpawnableArchetype({
     time: Number,
@@ -16,7 +17,7 @@ export class HoldTick extends SpawnableArchetype({
     z = this.entityMemory(Number)
 
     initialize(): void {
-        this.z = 1100 - this.spawnData.time
+        this.z = getZ(Layer.HOLD_TICK, this.spawnData.time)
         this.times.max = this.spawnData.time
         this.times.min = this.spawnData.time - note.speed
         if (options.hidden > 0) this.times.hidden = this.times.max - note.speed * options.hidden

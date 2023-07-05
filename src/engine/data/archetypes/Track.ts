@@ -2,7 +2,7 @@ import { options } from '../../configuration/options.js'
 import { Layer, judgmentPivot, trackActiveTime, trackDespawnDuration, trackSpawnDuration, trackWidth } from '../constants.js'
 import { animationCurves, track, trackSprites, voezSkin } from '../shared.js'
 import { skin } from '../skin.js'
-import { evaluateCurve, scaledX, voezSpaceToSonolusSpace } from '../util.js'
+import { evaluateCurve, getZ, scaledX, voezSpaceToSonolusSpace } from '../util.js'
 
 export class Track extends Archetype {
     data = this.defineData({
@@ -149,10 +149,9 @@ export class Track extends Archetype {
         })
 
         // Color elements
-        if (voezSkin.trackTop) this.drawColorSprites(trackSprites.top, topLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start))
-        else skin.sprites.lane.draw(topLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start), 1)
-        if (voezSkin.trackBottom)
-            this.drawColorSprites(trackSprites.bottom, bottomLayout, this.getZ(Layer.TRACK_BACKGROUND, this.times.start))
+        if (voezSkin.trackTop) this.drawColorSprites(trackSprites.top, topLayout, getZ(Layer.TRACK_BACKGROUND, this.times.start))
+        else skin.sprites.lane.draw(topLayout, getZ(Layer.TRACK_BACKGROUND, this.times.start), 1)
+        if (voezSkin.trackBottom) this.drawColorSprites(trackSprites.bottom, bottomLayout, getZ(Layer.TRACK_BACKGROUND, this.times.start))
 
         if (voezSkin.trackBottom)
             if (voezSkin.trackForeground)
@@ -230,7 +229,7 @@ export class Track extends Archetype {
                 b: topLayout.b,
             })
 
-            this.drawColorSprites(trackSprites.glow, left, this.getZ(Layer.TRACK_GLOW, this.times.start))
+            this.drawColorSprites(trackSprites.glow, left, getZ(Layer.TRACK_GLOW, this.times.start))
 
             const right = new Rect({
                 r: x + w,
@@ -239,7 +238,7 @@ export class Track extends Archetype {
                 b: topLayout.b,
             })
 
-            this.drawColorSprites(trackSprites.glow, right, this.getZ(Layer.TRACK_GLOW, this.times.start))
+            this.drawColorSprites(trackSprites.glow, right, getZ(Layer.TRACK_GLOW, this.times.start))
         }
 
         // Shape (slot)
@@ -286,8 +285,6 @@ export class Track extends Archetype {
         if (t < 1) skin.sprites.draw(sprites.get(this.shared.colorStart), layout, layer, 1 - t)
         if (t > 0) skin.sprites.draw(sprites.get(this.shared.colorEnd), layout, layer, t)
     }
-
-    getZ = (layer: number, time: number) => layer - time / 1000
 
     activate(): void {
         this.shared.active.start = time.now

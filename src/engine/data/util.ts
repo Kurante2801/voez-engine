@@ -67,3 +67,7 @@ export function spawnHoldTicks(trackRef: number, from: number, to: number) {
         archetypes.HoldTick.spawn({ time: i, pos: x })
     }
 }
+
+export function getZ(layer: number, time: number): number {
+    return layer - time / 1000
+}

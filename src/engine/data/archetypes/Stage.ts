@@ -32,6 +32,6 @@ export class Stage extends Archetype {
             b: Math.lerp(screen.t, screen.b, options.stageCover),
         })
 
-        skin.sprites.cover.draw(coverLayout, Layer.STAGE_COVER, 1)
+        skin.sprites.cover.draw(coverLayout, Layer.STAGE, 1)
     }
 }
