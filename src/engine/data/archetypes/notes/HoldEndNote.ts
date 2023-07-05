@@ -38,6 +38,7 @@ export class HoldEndNote extends Note {
         visual: {
             min: Number,
             max: Number,
+            hidden: Number,
         },
     })
 
@@ -68,6 +69,8 @@ export class HoldEndNote extends Note {
 
         this.tailTimes.visual.max = this.tailTimes.target
         this.tailTimes.visual.min = this.tailTimes.target - note.speed
+
+        if (options.hidden > 0) this.tailTimes.visual.hidden = this.tailTimes.visual.max - note.speed * options.hidden
 
         // Check if the track will move while this note is played
         const startX = getPosAtTime(this.data.trackRef, this.times.target)
@@ -183,7 +186,8 @@ export class HoldEndNote extends Note {
     draw(): void {
         if (time.now < this.times.visual.min) return
 
-        const t = Math.unlerp(this.times.visual.min, this.times.visual.max, time.now)
+        const now = options.hidden <= 0 ? time.now : Math.min(time.now, this.times.visual.hidden)
+        const t = Math.unlerp(this.times.visual.min, this.times.visual.max, now)
         this.y = Math.max(judgmentPivot, Math.lerp(screen.t, judgmentPivot, t))
 
         const endT = Math.unlerp(this.tailTimes.visual.min, this.tailTimes.visual.max, time.now)
@@ -197,7 +201,8 @@ export class HoldEndNote extends Note {
             b: this.y,
         })
 
-        skin.sprites.holdConnector.draw(connectorLayout, this.z - 100, 1)
+        if (options.hidden <= 0 || time.now < this.tailTimes.visual.hidden)
+            skin.sprites.holdConnector.draw(connectorLayout, this.z - 100, 1)
 
         // Draw head
         const layout = new Rect({
@@ -207,7 +212,7 @@ export class HoldEndNote extends Note {
             b: this.y - note.radius,
         })
 
-        skin.sprites.holdStartNote.draw(layout, this.z, 1)
+        if (options.hidden <= 0 || time.now < this.times.visual.hidden) skin.sprites.holdStartNote.draw(layout, this.z, 1)
 
         // Draw tail
         const tailLayout = new Rect({
@@ -217,7 +222,7 @@ export class HoldEndNote extends Note {
             b: endY - note.radius,
         })
 
-        skin.sprites.holdEndNote.draw(tailLayout, this.z, 1)
+        if (options.hidden <= 0 || time.now < this.tailTimes.visual.hidden) skin.sprites.holdEndNote.draw(tailLayout, this.z, 1)
     }
 
     afterImage(): void {
