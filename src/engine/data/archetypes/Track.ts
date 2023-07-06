@@ -5,6 +5,8 @@ import { skin } from '../skin.js'
 import { evaluateCurve, getZ, scaledX, voezSpaceToSonolusSpace } from '../util.js'
 
 export class Track extends Archetype {
+    touchOrder = 0
+
     data = this.defineData({
         startBeat: { name: 'startBeat', type: Number },
         endBeat: { name: 'endBeat', type: Number },
@@ -46,7 +48,7 @@ export class Track extends Archetype {
         track.glow = scaledX(12)
         track.slot = scaledX(12)
         track.active = scaledX(96)
-        track.hitbox = scaledX(8) // The hitbox extends a bit beyond track bounds
+        track.hitbox = scaledX(7) // The hitbox extends a bit beyond track bounds
     }
 
     preprocess(): void {
@@ -291,7 +293,6 @@ export class Track extends Archetype {
         this.shared.active.end = time.now + trackActiveTime
     }
 
-    touchOrder = 0
     touch(): void {
         if (options.autoplay) return
 

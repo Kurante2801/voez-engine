@@ -16,6 +16,7 @@ export enum NoteType {
 
 export abstract class Note extends Archetype {
     hasInput = true
+    touchOrder = 1
 
     abstract bucket: Bucket
     abstract sprite: SkinSprite

@@ -13,9 +13,9 @@ function fromSeconds(perfect: Seconds, great: Seconds, good: Seconds) {
 }
 
 export const windows = {
-    click: fromSeconds(0.04, 0.12, 0.2),
-    slide: fromSeconds([-0.04, 0.04], [-0.12, 0.12], [-0.12, 0.2]),
-    swipe: fromSeconds(0.04, 0.12, 0.2),
-    holdStart: fromSeconds(0.04, 0.12, 0.2),
+    click: fromSeconds(0.04, 0.12, 0.15),
+    slide: fromSeconds([-0.04, 0.04], [-0.12, 0.12], [-0.12, 0.15]),
+    swipe: fromSeconds(0.04, 0.12, 0.15),
+    holdStart: fromSeconds(0.04, 0.12, 0.15),
     holdEnd: fromSeconds([-0.35, 0], [-0.35, 0], [-0.35, 0]),
 }
