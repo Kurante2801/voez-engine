@@ -12,10 +12,17 @@ function fromSeconds(perfect: Seconds, great: Seconds, good: Seconds) {
     }
 }
 
+const perfect = 0.04
+const great = 0.1
+const good = 0.15
+
+const slide = 0.1
+const holdRelease = 0.2
+
 export const windows = {
-    click: fromSeconds(0.04, 0.12, 0.15),
-    slide: fromSeconds([-0.04, 0.04], [-0.12, 0.12], [-0.12, 0.15]),
-    swipe: fromSeconds(0.04, 0.12, 0.15),
-    holdStart: fromSeconds(0.04, 0.12, 0.15),
-    holdEnd: fromSeconds([-0.35, 0], [-0.35, 0], [-0.35, 0]),
+    click: fromSeconds(perfect, great, good),
+    slide: fromSeconds([-slide, good], [-slide, good], [-slide, good]),
+    swipe: fromSeconds(perfect, great, good),
+    holdStart: fromSeconds(perfect, great, good),
+    holdEnd: fromSeconds([-holdRelease, 0], [-holdRelease, 0], [-holdRelease, 0]),
 }
