@@ -236,7 +236,7 @@ export class HoldEndNote extends Note {
     afterImage(): void {
         archetypes.HoldAfterImage.spawn({
             trackRef: this.data.trackRef,
-            start: time.now,
+            start: Math.max(this.times.target, time.now), // Note CAN be missed before it begins (by starting it early and releasing it), so we account for that
             end: this.tailTimes.target,
             data: 0,
         })
