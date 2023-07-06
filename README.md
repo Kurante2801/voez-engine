@@ -1,4 +1,61 @@
-# Sonolus.js Template (TS + ESLint + Prettier)
+# VOEZ Engine
+
+Made for [Sonolus](https://sonolus.com/) using [sonolus.js-template-ts-eslint-prettier](https://github.com/Sonolus/sonolus.js-template-ts-eslint-prettier)
+
+## Custom Resources
+
+### Skin Sprites
+
+| Name                           |
+| ------------------------------ |
+| `VOEZ Track Line Top`          |
+| `VOEZ Track Line Bottom`       |
+| `VOEZ Track Border Top`        |
+| `VOEZ Track Border Bottom`     |
+| `VOEZ Track Active Sides`      |
+| `VOEZ Track Active Top`        |
+| `VOEZ Track Foreground`        |
+| `VOEZ Swipe`                   |
+| `VOEZ Track Top Red`           |
+| `VOEZ Track Top Yellow`        |
+| `VOEZ Track Top Gray`          |
+| `VOEZ Track Top Green`         |
+| `VOEZ Track Top Orange`        |
+| `VOEZ Track Top Violet`        |
+| `VOEZ Track Top Blue`          |
+| `VOEZ Track Top Cyan`          |
+| `VOEZ Track Top Purple`        |
+| `VOEZ Track Bottom Red`        |
+| `VOEZ Track Bottom Yellow`     |
+| `VOEZ Track Bottom Gray`       |
+| `VOEZ Track Bottom Light Blue` |
+| `VOEZ Track Bottom Green`      |
+| `VOEZ Track Bottom Orange`     |
+| `VOEZ Track Bottom Violet`     |
+| `VOEZ Track Bottom Blue`       |
+| `VOEZ Track Bottom Cyan`       |
+| `VOEZ Track Bottom Purple`     |
+| `VOEZ Track Glow Red`          |
+| `VOEZ Track Glow Yellow`       |
+| `VOEZ Track Glow Gray`         |
+| `VOEZ Track Glow Light Blue`   |
+| `VOEZ Track Glow Green`        |
+| `VOEZ Track Glow Orange`       |
+| `VOEZ Track Glow Violet`       |
+| `VOEZ Track Glow Blue`         |
+| `VOEZ Track Glow Cyan`         |
+| `VOEZ Track Glow Purple`       |
+
+### Particle Effects
+
+| Name                |
+| ------------------- |
+| `VOEZ Perfect`      |
+| `VOEZ Great`        |
+| `VOEZ Good`         |
+| `VOEZ Perfect Hold` |
+| `VOEZ Great Hold`   |
+| `VOEZ Good Hold`    |
 
 ## Prerequisites
 
@@ -11,11 +68,9 @@
 
 ## Get Started
 
-To get this template, run (change `my-project` to desired name):
-
-```
-npx degit Sonolus/sonolus.js-template-ts-eslint-prettier my-project
-```
+-   Get any `track_easy.json`, `track_hard.json` or `track_extra.json` and place it on `src/level/track.json`
+-   Get any `note_easy.json`, `note_hard.json` or `note_extra.json` and place it on `src/level/note.json`
+-   Optionally place `song_full.ogg` in `src/level/bgm.ogg`
 
 To install dependencies, run in project directory:
 
