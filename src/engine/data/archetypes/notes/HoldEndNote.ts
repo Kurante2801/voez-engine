@@ -5,15 +5,10 @@ import { effect } from '../../effect.js'
 import { particle } from '../../particle.js'
 import { note } from '../../shared.js'
 import { skin } from '../../skin.js'
-import { getPosAtTime, getScheduledSFXTime, getZ, spawnHoldTicks } from '../../util.js'
+import { getScheduledSFXTime, getZ, spawnHoldTicks, trackMoves } from '../../util.js'
 import { windows } from '../../windows.js'
 import { archetypes } from '../index.js'
 import { Note, NoteType } from './Note.js'
-
-type TickData = {
-    time: number
-    pos: number
-}
 
 export class HoldEndNote extends Note {
     bucket = buckets.holdEnd
@@ -80,19 +75,8 @@ export class HoldEndNote extends Note {
 
         if (options.hidden > 0) this.tailTimes.visual.hidden = this.tailTimes.visual.max - note.speed * options.hidden
 
-        // Check if the track will move while this note is played
-        const startX = getPosAtTime(this.data.trackRef, this.times.target)
-        let moves = false
-
-        for (let i = this.times.target; i <= this.tailTimes.target; i += 0.1) {
-            const x = getPosAtTime(this.data.trackRef, i)
-            if (x !== startX) {
-                moves = true
-                break
-            }
-        }
-
-        if (moves) spawnHoldTicks(this.data.trackRef, this.times.target, this.tailTimes.target)
+        if (trackMoves(this.data.trackRef, this.times.target, this.tailTimes.target))
+            spawnHoldTicks(this.data.trackRef, this.times.target, this.tailTimes.target)
     }
 
     updateSequential(): void {

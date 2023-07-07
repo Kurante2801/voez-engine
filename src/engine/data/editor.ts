@@ -212,14 +212,14 @@ export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: 
             if (note.Track !== track.Id) continue
 
             let name = ''
-            let extra = 0
+            let direction = -1
 
             if (note.Type === 'click') name = ClickNote.name
             if (note.Type === 'slide') name = SlideNote.name
 
             if (note.Type === 'swipe') {
                 name = SwipeNote.name
-                extra = note.Dir <= 0 ? -1 : 1
+                if (note.Dir > 0) direction = 1 // RIGHT
             }
 
             if (note.Type === 'hold') {
@@ -256,7 +256,7 @@ export function editorEntities(tracks: EditorTrack[], notes: EditorNote[], bpm: 
                 data: {
                     trackRef: trackRef,
                     [EngineArchetypeDataName.Beat]: secondsToBeat(note.Time),
-                    extraData: extra,
+                    direction: direction,
                 },
             })
         }

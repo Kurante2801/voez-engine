@@ -1,5 +1,6 @@
-import { judgmentPivot, noteMissPosition } from '../../constants.js'
+import { Layer, judgmentPivot, noteMissPosition } from '../../constants.js'
 import { note } from '../../shared.js'
+import { getInverseZ } from '../../util.js'
 import { archetypes } from '../index.js'
 
 // Missed note
@@ -10,6 +11,11 @@ export abstract class AfterImage extends SpawnableArchetype({
     data: Number,
 }) {
     abstract sprite: SkinSprite
+    z = this.entityMemory(Number)
+
+    initialize(): void {
+        this.z = getInverseZ(Layer.NOTE_AFTERIMAGE, this.spawnData.start)
+    }
 
     updateParallel(): void {
         if (time.now >= this.spawnData.end || this.trackSharedMemory.animating || this.trackState === EntityState.Despawned) {
@@ -34,7 +40,7 @@ export abstract class AfterImage extends SpawnableArchetype({
             b: y - note.radius,
         })
 
-        this.sprite.draw(layout, 900 - this.spawnData.start, alpha)
+        this.sprite.draw(layout, this.z, alpha)
     }
 
     get trackSharedMemory() {

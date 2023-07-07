@@ -8,6 +8,8 @@ export enum Layer {
     JUDGMENT,
     TRACK_ACTIVE,
     TRACK_SLOT,
+    HOLD_NOTE_CONNECTOR_AFTERIMAGE,
+    NOTE_AFTERIMAGE,
     HOLD_NOTE_CONNECTOR,
     NOTE,
     HOLD_TICK,
@@ -55,3 +57,6 @@ export const noteMissDuration = 1
 
 // Position where a missed note will travel
 export const noteMissPosition = judgmentPivot - 0.4
+
+// Seconds between each hold tick
+export const tickDistance = 0.1

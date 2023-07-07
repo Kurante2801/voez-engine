@@ -9,11 +9,22 @@ import { windows } from '../../windows.js'
 import { archetypes } from '../index.js'
 import { Note, NoteType } from './Note.js'
 
+export const SwipeDirection = {
+    Left: -1,
+    Right: 1,
+} as const
+
+export type SwipeDirection = (typeof SwipeDirection)[keyof typeof SwipeDirection]
+
 export class SwipeNote extends Note {
     bucket = buckets.swipe
     sprite = skin.sprites.swipeNote
     type = NoteType.SWIPE
     windows = windows.swipe
+
+    swipeData = this.defineData({
+        direction: { name: 'direction', type: DataType<SwipeDirection> },
+    })
 
     fallbackSprites = {
         note: skin.sprites.swipeNoteFallback,
@@ -34,11 +45,10 @@ export class SwipeNote extends Note {
 
     preprocess(): void {
         super.preprocess()
-        if (options.mirror) this.data.extraData *= -1
-    }
-
-    get swipeDelta(): number {
-        return this.data.extraData
+        if (options.mirror) {
+            if (this.swipeData.direction === SwipeDirection.Left) this.swipeData.direction = SwipeDirection.Right
+            else this.swipeData.direction = SwipeDirection.Right
+        }
     }
 
     fallbackLayout = this.entityMemory(Quad)
@@ -53,7 +63,7 @@ export class SwipeNote extends Note {
         const w = scaledX(40) * options.noteSize
         const h = w
 
-        if (this.swipeDelta < 0) {
+        if (this.swipeData.direction === SwipeDirection.Left) {
             // prettier-ignore
             new Quad({
                 x1: w, y1: h,
@@ -93,10 +103,11 @@ export class SwipeNote extends Note {
 
                 const offset = touch.position.x - touch.startPosition.x
 
-                let delta = 0
-                if (Math.abs(offset) >= note.swipeThreshold) delta = offset < 0 ? -1 : 1
+                let direction = 0
+                if (Math.abs(offset) >= note.swipeThreshold) direction = offset < 0 ? -1 : 1
+                const desired = this.swipeData.direction === SwipeDirection.Left ? -1 : 1
 
-                if (delta === this.swipeDelta) this.judge(touch)
+                if (direction === desired) this.judge(touch)
                 else if (touch.ended) this.despawn = true
 
                 break
@@ -121,10 +132,8 @@ export class SwipeNote extends Note {
             this.fallbackSprites.note.draw(layout, this.z, 1)
             this.fallbackSprites.marker.draw(this.fallbackLayout.translate(this.pos, this.y), this.z, 1)
         } else {
-            if (this.swipeDelta < 0) {
-                // LEFT
-                this.sprite.draw(layout, this.z, 1)
-            } else {
+            if (this.swipeData.direction === SwipeDirection.Left) this.sprite.draw(layout, this.z, 1)
+            else {
                 // RIGHT (flip layout horizontally)
                 const l = layout.l
                 layout.l = layout.r
@@ -140,7 +149,7 @@ export class SwipeNote extends Note {
             trackRef: this.data.trackRef,
             start: time.now,
             end: time.now + noteMissDuration,
-            data: this.data.extraData,
+            data: this.swipeData.direction,
         })
     }
 }

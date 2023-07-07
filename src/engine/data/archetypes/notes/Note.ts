@@ -33,7 +33,6 @@ export abstract class Note extends Archetype {
     data = this.defineData({
         trackRef: { name: 'trackRef', type: Number },
         beat: { name: EngineArchetypeDataName.Beat, type: Number },
-        extraData: { name: 'extraData', type: Number },
     })
 
     times = this.entityMemory({

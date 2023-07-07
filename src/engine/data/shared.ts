@@ -8,6 +8,7 @@ export const track = levelData({
     hitbox: Number, // hitbox margin (half)
 })
 
+// Pre-calculated AnimationCurves
 export const animationCurves = levelMemory({
     spawnWidthTuple: Tuple(145, Number),
     spawnHeightTuple: Tuple(145, Number),
@@ -15,6 +16,7 @@ export const animationCurves = levelMemory({
     despawnHeightTuple: Tuple(145, Number),
 })
 
+// Cache whether sprites exist or not, may not be necessary
 export const voezSkin = levelData({
     trackTop: Boolean,
     trackBottom: Boolean,
@@ -29,7 +31,7 @@ export const voezSkin = levelData({
     swipeNote: Boolean,
 })
 
-// Color sprites (we need to use tuples since we reach the max limit of sprites if we draw 30 sprites)
+// Color sprites (we need to use tuples since sprites break if we draw 30 sprites per track)
 export const trackSprites = levelMemory({
     top: Tuple(10, SkinSpriteId),
     bottom: Tuple(10, SkinSpriteId),

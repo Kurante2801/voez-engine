@@ -108,7 +108,6 @@ export class Track extends Archetype {
     updateParallel(): void {
         if (this.shouldDespawn()) return
 
-        // Draw track itself
         let scaleX = 1
         let scaleY = 1
         let scaleSlot = 1

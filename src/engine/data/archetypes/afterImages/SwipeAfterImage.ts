@@ -32,7 +32,7 @@ export class SwipeAfterImage extends AfterImage {
                 layout.l = layout.r
                 layout.r = l
             }
-            this.sprite.draw(layout, 900 - this.spawnData.start, alpha)
-        } else this.fallback.draw(layout, 900 - this.spawnData.start, alpha)
+            this.sprite.draw(layout, this.z, alpha)
+        } else this.fallback.draw(layout, this.z, alpha)
     }
 }
