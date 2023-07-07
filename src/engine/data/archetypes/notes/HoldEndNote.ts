@@ -122,7 +122,7 @@ export class HoldEndNote extends Note {
         if (this.despawnSequential || options.autoplay || this.headInfo.state !== EntityState.Despawned) return
 
         // Note is being held (and still has time left)
-        if (this.isTouched && time.now < this.times.input.max) {
+        if (this.isTouched && time.now < this.times.input.max && this.headSharedData.judged) {
             if (this.shouldPlaySFX && !this.sfxInstanceId) this.loopSoundEffect()
             this.moveEffect()
 
