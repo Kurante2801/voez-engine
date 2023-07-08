@@ -4,5 +4,3 @@ node_modules
 dist
 
 src/level/bgm.*
-src/level/track.json
-src/level/note.json

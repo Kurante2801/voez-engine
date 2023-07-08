@@ -57,6 +57,21 @@ Made for [Sonolus](https://sonolus.com/) using [sonolus.js-template-ts-eslint-pr
 | `VOEZ Great Hold`   |
 | `VOEZ Good Hold`    |
 
+## Module functions
+
+### `sourceToChart(source)`
+
+Converts a VOEZ Source to a VOEZ Chart
+
+-   `source`: [VoezSource](lib/src/source/index.cts)
+
+### `chartToLevelData(vc, offset?)`
+
+Converts a VOEZ Chart to Sonolus Level Data
+
+-   `chart`: [VoezChart](lib/src/chart/index.cts)
+-   `offset`: number (default `0`)
+
 ## Prerequisites
 
 -   [Node.js](https://nodejs.org) (16+)
@@ -67,10 +82,6 @@ Made for [Sonolus](https://sonolus.com/) using [sonolus.js-template-ts-eslint-pr
 -   [ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
 ## Get Started
-
--   Get any `track_easy.json`, `track_hard.json` or `track_extra.json` and place it on `src/level/track.json`
--   Get any `note_easy.json`, `note_hard.json` or `note_extra.json` and place it on `src/level/note.json`
--   Optionally place `song_full.ogg` in `src/level/bgm.ogg`
 
 To install dependencies, run in project directory:
 
