@@ -1,7 +1,6 @@
 import { options } from '../../configuration/options.mjs'
-import { despawnHeightValues, despawnWidthValues, spawnHeightValues, spawnWidthValues } from '../bakedAnimationCurves.mjs'
 import { scrollDurations } from '../constants.mjs'
-import { animationCurves, note, trackSprites, voezSkin } from '../shared.mjs'
+import { note, trackSprites, voezSkin } from '../shared.mjs'
 import { skin, trackBottomSprites, trackGlowSprites, trackTopSprites } from '../skin.mjs'
 import { archetypes } from './index.mjs'
 
@@ -94,12 +93,6 @@ export class Initialization extends Archetype {
         for (const archetype of Object.values(archetypes)) {
             if ('globalPreprocess' in archetype) archetype.globalPreprocess()
         }
-
-        // Initialize track animation tuples
-        for (const [index, value] of spawnWidthValues.entries()) animationCurves.spawnWidthTuple.set(index, value)
-        for (const [index, value] of spawnHeightValues.entries()) animationCurves.spawnHeightTuple.set(index, value)
-        for (const [index, value] of despawnWidthValues.entries()) animationCurves.despawnWidthTuple.set(index, value)
-        for (const [index, value] of despawnHeightValues.entries()) animationCurves.despawnHeightTuple.set(index, value)
 
         // Initialize sprite tuples
         for (const [index, value] of trackTopSprites.entries()) trackSprites.top.set(index, value.id)

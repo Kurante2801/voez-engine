@@ -1,8 +1,9 @@
 import { options } from '../../configuration/options.mjs'
 import { Layer, judgmentPivot, trackActiveTime, trackDespawnDuration, trackSpawnDuration, trackWidth } from '../constants.mjs'
-import { animationCurves, track, trackSprites, voezSkin } from '../shared.mjs'
+import { trackDespawnHeight, trackDespawnWidth, trackSpawnHeight, trackSpawnWidth } from '../easing.mjs'
+import { track, trackSprites, voezSkin } from '../shared.mjs'
 import { skin } from '../skin.mjs'
-import { evaluateCurve, getZ, scaledX, voezSpaceToSonolusSpace } from '../util.mjs'
+import { getZ, scaledX, voezSpaceToSonolusSpace } from '../util.mjs'
 
 export class Track extends Archetype {
     touchOrder = 0
@@ -117,8 +118,8 @@ export class Track extends Archetype {
         // Spawn animation
         if (this.data.animateSpawn && time.now <= this.times.startAnim) {
             const t = Math.unlerp(this.times.start, this.times.startAnim, time.now)
-            scaleX = evaluateCurve(animationCurves.spawnWidthTuple, t, 100)
-            scaleY = evaluateCurve(animationCurves.spawnHeightTuple, t, 100)
+            scaleX = trackSpawnWidth(t)
+            scaleY = trackSpawnHeight(t)
             scaleSlot = t
             this.animating = true
         }
@@ -126,8 +127,8 @@ export class Track extends Archetype {
         // Despawn animation
         if (time.now >= this.times.end) {
             const t = Math.unlerp(this.times.end, this.times.endAnim, time.now)
-            scaleX = evaluateCurve(animationCurves.despawnWidthTuple, t, 100)
-            scaleY = evaluateCurve(animationCurves.despawnHeightTuple, t, 100)
+            scaleX = trackDespawnWidth(t)
+            scaleY = trackDespawnHeight(t)
             scaleSlot = 1 - t
             this.animating = true
         }

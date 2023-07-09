@@ -26,7 +26,7 @@ export const trackMarginLeft = 0.09375
 export const trackMarginRight = 1.0 - trackMarginLeft
 
 // Track animations' durations
-export const trackSpawnDuration = 0.35
+export const trackSpawnDuration = 3 / 9
 export const trackDespawnDuration = 0.25
 
 // Time in seconds a track will have the active effect after being touched

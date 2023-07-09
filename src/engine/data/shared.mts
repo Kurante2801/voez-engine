@@ -8,14 +8,6 @@ export const track = levelData({
     hitbox: Number, // hitbox margin (half)
 })
 
-// Pre-calculated AnimationCurves
-export const animationCurves = levelMemory({
-    spawnWidthTuple: Tuple(145, Number),
-    spawnHeightTuple: Tuple(145, Number),
-    despawnWidthTuple: Tuple(145, Number),
-    despawnHeightTuple: Tuple(145, Number),
-})
-
 // Cache whether sprites exist or not, may not be necessary
 export const voezSkin = levelData({
     trackTop: Boolean,

@@ -75,3 +75,23 @@ export function easeFunction(ease: Ease, value: number): number {
     for (const [key, func] of funcs) if (key == ease) return func(value)
     return 1
 }
+
+export function trackSpawnWidth(x: number): number {
+    if (x === 0) return 0
+    if (x === 1) return 1
+
+    const c4 = (2 * Math.PI) / 3
+    return Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1
+}
+
+export function trackSpawnHeight(x: number): number {
+    return 1 - Math.pow(1 - x, 5)
+}
+
+export function trackDespawnWidth(x: number): number {
+    return Math.pow(1 - x, 5)
+}
+
+export function trackDespawnHeight(x: number): number {
+    return 1 - x
+}
