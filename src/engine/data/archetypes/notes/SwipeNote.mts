@@ -45,10 +45,7 @@ export class SwipeNote extends Note {
 
     preprocess(): void {
         super.preprocess()
-        if (options.mirror) {
-            if (this.swipeData.direction === SwipeDirection.Left) this.swipeData.direction = SwipeDirection.Right
-            else this.swipeData.direction = SwipeDirection.Right
-        }
+        if (options.mirror) this.swipeData.direction *= -1
     }
 
     fallbackLayout = this.entityMemory(Quad)
